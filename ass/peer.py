@@ -13,7 +13,7 @@ from ftplib import FTP
 
 _SERVER_PORT = 3000
 _PEER_PORT = 5001
-_SERVER_HOST = "172.20.10.13"
+_SERVER_HOST = "192.168.31.42"
 _LOCAL_FILE_SYSTEM = './local-system/'
 _LOCAL_REPOSITORY = './ass/local-repo/'
 
