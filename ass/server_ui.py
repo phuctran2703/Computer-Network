@@ -4,6 +4,7 @@ import re
 from threading import Thread, Lock
 import time
 import sys
+import socket
 
 from server import Server
 
@@ -15,6 +16,10 @@ SERVER_PASSWORD = 'admin'
 PING_PATTERN = r"^ping\s[\w.]+$"
 DISCOVER_PATTERN = r"^discover\s[\w.]+$"
 CLEAR_PATTERN = r"^clear$"
+
+IP_ADDRESS = socket.gethostbyname(socket.gethostname())
+IP_ADDRESS = "192.168.137.1"
+PORT = 3000
 
 class Server_App(tk.Tk):
     def __init__(self, server_port):
@@ -66,11 +71,8 @@ class Server_App(tk.Tk):
             messagebox.showerror("Lỗi đăng nhập", "Sai tên đăng nhập hoặc mật khẩu.")
             return
         
-        self.server = Server("192.168.31.42",3000,"serverdatabase.json") ###Liên kết
-        # self.server.start()
-        serverlisten=Thread(target=self.server.listen, args=(10,))
-        serverlisten.setDaemon(True)
-        serverlisten.start()
+        self.server = Server(IP_ADDRESS,PORT,"serverdatabase.json") ###Liên kết
+        Thread(target=self.server.listen, args=(10,), daemon=True).start()
         self.server_on = True
         
         self.current_page_frame.pack_forget()
@@ -144,7 +146,7 @@ class Server_App(tk.Tk):
         if command == "clear":
             return "clear"
         opcode, hostname = command.split(" ")
-        return self.server.run(opcode.upper(), hostname) #################################Liên kết
+        return self.server.run(opcode.upper(), hostname)
     
     def update_output(self, server_output):#???????
         while not self.closing:
@@ -229,7 +231,7 @@ class Server_App(tk.Tk):
                                  command = lambda: self.clear_output(server_output), pady=5)
         output_clear.grid(row = 2, column= 206, pady = 5)
 
-        self.thread = Thread(target=self.update_output, args=[server_output])#?????????????????????????????????????
+        self.thread = Thread(target=self.update_output, args=[server_output], daemon=True)
         self.thread.start()
         
         return terminal_frame
